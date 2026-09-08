@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Складской Акинатор</title>
+  <meta name="theme-color" content="#0b1220" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <section id="screen-start" class="screen">
+      <img id="start-genie" class="genie" src="assets/genie-confused.jpg" alt="Джинн" />
+      <h1>Складской Акинатор</h1>
+      <p class="lead">Задумайте сотрудника склада. Я задам вопросы и назову имя и фамилию.</p>
+      <button class="btn primary" id="btn-start">Начать игру</button>
+    </section>
+    <section id="screen-play" class="screen hidden">
+      <div class="topbar">
+        <span id="q-count">Вопрос 1</span>
+        <button class="link" id="btn-restart-small">Заново</button>
+      </div>
+      <img id="play-genie" class="genie" src="assets/genie-thinking.jpg" alt="Джинн думает" />
+      <p id="question" class="question"></p>
+      <div class="answers">
+        <button class="btn yes" data-answer="yes">Да</button>
+        <button class="btn pyes" data-answer="probably_yes">Скорее да</button>
+        <button class="btn unk" data-answer="unknown">Не знаю</button>
+        <button class="btn pno" data-answer="probably_no">Скорее нет, чем да</button>
+        <button class="btn no" data-answer="no">Нет</button>
+      </div>
+    </section>
+    <section id="screen-confirm" class="screen hidden">
+      <img id="confirm-genie" class="genie" src="assets/genie-solved.jpg" alt="Джинн понял" />
+      <p class="question">Это этот человек?</p>
+      <p id="confirm-name" class="guess-name"></p>
+      <div class="answers">
+        <button class="btn yes" id="btn-yes-guess">Да</button>
+        <button class="btn no" id="btn-no-guess">Нет, продолжай</button>
+      </div>
+    </section>
+    <section id="screen-final" class="screen hidden">
+      <p id="final-name" class="final-name"></p>
+    </section>
+  </main>
+  <script src="images.js"></script>
+  <script src="data.js"></script>
+  <script src="engine.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
