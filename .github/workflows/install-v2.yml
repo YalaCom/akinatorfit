@@ -1,0 +1,35 @@
+name: Install Akinator v2
+on:
+  push:
+    paths:
+      - .deploy/ready
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  install:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+      - name: Verify and install package
+        shell: bash
+        run: |
+          set -euo pipefail
+          test -f .deploy/ready || exit 0
+          cat .deploy/part* | base64 -d > /tmp/akinator-v2.tar.gz
+          echo "bc2583e17b87c40811ad25416c3e22b99535c484953ae88ef80cb006161b33a4  /tmp/akinator-v2.tar.gz" | sha256sum -c -
+          tar -tzf /tmp/akinator-v2.tar.gz | while IFS= read -r path; do
+            case "$path" in /*|*../*|../*) echo "Unsafe archive path"; exit 1;; esac
+          done
+          tar -xzf /tmp/akinator-v2.tar.gz
+          rm -f img-confused.js img-thinking.js img-solved.js images.js qfix.js
+          rm -rf .deploy
+          git config user.name "Akinator deployment"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if ! git diff --cached --quiet; then
+            git commit -m "Install Akinator v2 with adaptive engine and original genie images"
+            git push origin HEAD:main
+          fi
