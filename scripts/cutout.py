@@ -30,3 +30,4 @@ for name in ('confused', 'thinking', 'solved'):
     im.save(root / (name + '.png'))
     assert im.getchannel('A').getextrema() == (0,255)
     print(name, im.size)
+# Regenerate artwork only when the repair workflow is explicitly triggered.
