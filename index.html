@@ -4,34 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>Складской Акинатор</title>
-  <meta name="theme-color" content="#0b1220" />
+  <meta name="theme-color" content="#070d18" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="glow"></div>
   <main class="app">
     <section id="screen-start" class="screen">
-      <img id="start-genie" class="genie" src="assets/genie-confused.jpg" alt="Джинн" />
+      <div class="orb"><img id="start-genie" class="genie float" alt="Джинн" /></div>
       <h1>Складской Акинатор</h1>
-      <p class="lead">Задумайте сотрудника склада. Я задам вопросы и назову имя и фамилию.</p>
-      <button class="btn primary" id="btn-start">Начать игру</button>
+      <p class="lead">Задумайте человека со склада. Я задам вопросы и назову имя и фамилию.</p>
+      <button class="btn primary pulse" id="btn-start">Начать игру</button>
     </section>
     <section id="screen-play" class="screen hidden">
-      <div class="topbar">
-        <span id="q-count">Вопрос 1</span>
-        <button class="link" id="btn-restart-small">Заново</button>
-      </div>
-      <img id="play-genie" class="genie" src="assets/genie-thinking.jpg" alt="Джинн думает" />
+      <div class="topbar"><span id="q-count">Вопрос 1</span><button class="link" id="btn-restart-small">Заново</button></div>
+      <div class="orb"><img id="play-genie" class="genie" alt="Джинн" /></div>
       <p id="question" class="question"></p>
       <div class="answers">
         <button class="btn yes" data-answer="yes">Да</button>
-        <button class="btn pyes" data-answer="probably_yes">Скорее да</button>
-        <button class="btn unk" data-answer="unknown">Не знаю</button>
-        <button class="btn pno" data-answer="probably_no">Скорее нет, чем да</button>
         <button class="btn no" data-answer="no">Нет</button>
+        <button class="btn unk" data-answer="unknown">Не знаю</button>
+        <button class="btn pyes" data-answer="probably_yes">Скорее да, чем нет</button>
       </div>
     </section>
     <section id="screen-confirm" class="screen hidden">
-      <img id="confirm-genie" class="genie" src="assets/genie-solved.jpg" alt="Джинн понял" />
+      <div class="orb"><img id="confirm-genie" class="genie pop" alt="Джинн понял" /></div>
       <p class="question">Это этот человек?</p>
       <p id="confirm-name" class="guess-name"></p>
       <div class="answers">
@@ -43,8 +40,11 @@
       <p id="final-name" class="final-name"></p>
     </section>
   </main>
-  <script src="images.js"></script>
+  <script src="img-confused.js"></script>
+  <script src="img-thinking.js"></script>
+  <script src="img-solved.js"></script>
   <script src="data.js"></script>
+  <script src="qfix.js"></script>
   <script src="engine.js"></script>
   <script src="app.js"></script>
 </body>
