@@ -1,22 +1,32 @@
-:root { --bg:#07101c; --card:#101b2d; --text:#f4f7fb; --muted:#9fb0c8; --yes:#1f9d55; --no:#c0392b; --unk:#4a5568; }
+:root { --bg:#070d18; --text:#f6f8fc; --muted:#9db0c9; --yes:#17a34a; --no:#dc2626; --unk:#475569; --pyes:#2563eb; }
 * { box-sizing:border-box; }
-html,body { margin:0; min-height:100%; background:radial-gradient(1200px 600px at 50% -10%, #163154, var(--bg)); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; }
-.app { max-width:520px; margin:0 auto; padding:16px 16px calc(24px + env(safe-area-inset-bottom)); }
-.screen { display:flex; flex-direction:column; align-items:center; gap:14px; }
+html,body { margin:0; min-height:100%; background:var(--bg); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif; overflow-x:hidden; }
+.glow { position:fixed; inset:-20% -10% auto -10%; height:55vh; background:radial-gradient(circle at 50% 20%, rgba(88,60,180,.35), transparent 62%); pointer-events:none; animation:pulseGlow 5s ease-in-out infinite; }
+@keyframes pulseGlow { 0%,100%{opacity:.7;transform:scale(1)} 50%{opacity:1;transform:scale(1.06)} }
+.app { max-width:520px; margin:0 auto; padding:18px 16px calc(28px + env(safe-area-inset-bottom)); position:relative; }
+.screen { display:flex; flex-direction:column; align-items:center; gap:14px; animation:fadeUp .35s ease; }
 .hidden { display:none; }
-.genie { width:min(78vw,360px); height:auto; border-radius:24px; background:#0c1626; box-shadow:0 16px 40px rgba(0,0,0,.35); }
-h1 { margin:8px 0 0; font-size:1.7rem; text-align:center; }
-.lead,.question { text-align:center; color:var(--muted); line-height:1.4; margin:0; font-size:1.05rem; }
-.question { color:var(--text); font-size:1.22rem; min-height:3.2em; }
-.topbar { width:100%; display:flex; justify-content:space-between; align-items:center; color:var(--muted); font-size:.95rem; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.genie { width:min(72vw,320px); height:auto; border-radius:28px; background:linear-gradient(180deg,#12203a,#0b1528); box-shadow:0 18px 50px rgba(0,0,0,.4); }
+.float { animation:floaty 3.6s ease-in-out infinite; }
+.pop { animation:popin .45s ease; }
+@keyframes floaty { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+@keyframes popin { 0%{transform:scale(.86);opacity:.4} 70%{transform:scale(1.04)} 100%{transform:scale(1);opacity:1} }
+.thinking { animation:think 1.4s ease-in-out infinite; }
+@keyframes think { 0%,100%{filter:brightness(1);transform:rotate(-1deg)} 50%{filter:brightness(1.12);transform:rotate(1deg)} }
+.confused { animation:shake .5s ease; }
+@keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+h1 { margin:6px 0 0; font-size:1.7rem; text-align:center; }
+.lead,.question { text-align:center; color:var(--muted); line-height:1.4; margin:0; }
+.question { color:var(--text); font-size:1.2rem; min-height:3em; }
+.topbar { width:100%; display:flex; justify-content:space-between; color:var(--muted); }
 .answers { width:100%; display:grid; gap:10px; }
-.btn { width:100%; border:0; border-radius:14px; padding:14px 12px; font-size:1.05rem; color:#fff; background:var(--card); cursor:pointer; }
-.btn.primary { background:#6b46c1; font-weight:700; }
-.btn.yes { background:var(--yes); }
-.btn.no { background:var(--no); }
-.btn.pyes { background:#2f855a; }
-.btn.pno { background:#9b2c2c; }
-.btn.unk { background:var(--unk); }
-.link { background:none; border:0; color:#93c5fd; cursor:pointer; font-size:.95rem; }
-.guess-name,.final-name { font-size:1.8rem; font-weight:800; text-align:center; margin:8px 0 12px; }
-.final-name { min-height:70vh; display:flex; align-items:center; justify-content:center; font-size:2.1rem; }
+.btn { width:100%; border:0; border-radius:16px; padding:15px 12px; font-size:1.08rem; color:#fff; cursor:pointer; transition:transform .12s ease; }
+.btn:active { transform:scale(.98); }
+.btn.primary { background:#7c3aed; font-weight:700; }
+.pulse { animation:pulseBtn 2s ease-in-out infinite; }
+@keyframes pulseBtn { 0%,100%{box-shadow:0 0 0 0 rgba(124,58,237,.45)} 70%{box-shadow:0 0 0 12px rgba(124,58,237,0)} }
+.btn.yes{background:var(--yes)} .btn.no{background:var(--no)} .btn.unk{background:var(--unk)} .btn.pyes{background:var(--pyes)}
+.link { background:none; border:0; color:#93c5fd; cursor:pointer; }
+.guess-name,.final-name { font-size:1.85rem; font-weight:800; text-align:center; margin:6px 0 10px; }
+.final-name { min-height:70vh; display:flex; align-items:center; justify-content:center; animation:fadeUp .4s ease; }
