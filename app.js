@@ -2,8 +2,8 @@
 'use strict';
 const $=id=>document.getElementById(id);const E=window.Engine;
 const screens=['start','play','confirm','recovery','final'];
-let session=null,currentQuestion=null,pendingGuess=null,previousState='play',recoveryQueue=[];
-const image={confused:'assets/confused.webp',thinking:'assets/thinking.webp',solved:'assets/solved.webp'};
+let session=null,currentQuestion=null,pendingGuess=null,recoveryQueue=[];
+const image={confused:'assets/confused.webp?v=3',thinking:'assets/thinking.webp?v=3',solved:'assets/solved.webp?v=3'};
 const tg=window.Telegram?.WebApp;
 try{tg?.ready();tg?.expand();tg?.setHeaderColor('#0b1020');tg?.setBackgroundColor('#0b1020');}catch(_){}
 function show(name){for(const s of screens)$('screen-'+s).classList.toggle('hidden',s!==name);document.body.dataset.screen=name;window.scrollTo(0,0);}
@@ -45,7 +45,6 @@ document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>answer(b.dat
 $('btn-yes-guess').onclick=finalize;$('btn-no-guess').onclick=reject;
 $('btn-recovery-next').onclick=recoverNext;$('btn-recovery-back').onclick=undo;$('btn-recovery-reset').onclick=start;
 $('final-name').onclick=start;
-// Back button returns to the previous question without silently discarding a game.
 try{tg?.BackButton?.onClick(()=>{if(document.body.dataset.screen==='start')tg.close();else undo();});}catch(_){}
 show('start');
 })();
