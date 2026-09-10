@@ -1,4 +1,4 @@
-/* Strict work-branch logic. Loads after branch-rules-v5.js and before app.js. */
+/* Strict work-branch logic. Loads after branch-rules-v5.js and before learning/app. */
 (function(root){
 'use strict';
 const E=root.Engine,D=root.GAME_DATA,B=root.BranchRulesV5;
@@ -7,7 +7,7 @@ const canon=B.canon,response=B.response;
 const yes=a=>a==='yes'||a==='probably_yes';
 const no=a=>a==='no'||a==='probably_no';
 
-// Correct/strengthen Ruslan Serov's confirmed work profile.
+// Confirmed profile: Ruslan Serov works only on placement.
 const ruslan=D.people.find(p=>p.id===29||p.name==='Серов Руслан');
 if(ruslan){
   ruslan.f=ruslan.f||{};
@@ -23,7 +23,7 @@ if(ruslan){
   ruslan.f['work:marketplace_and_leroy']=false;
 }
 
-const incompatibleWithOnlyPlacement=new Set([
+const crossDepartment=new Set([
   'work:two_departments','work:three_departments',
   'work:receiving_and_placement','work:assembly_and_receiving',
   'work:assembly_and_placement','work:marketplace_and_leroy',
@@ -39,19 +39,22 @@ function onlyPlacementAnswer(s){
 function placementConfirmed(s){
   return yes(response(s,'primary:placement'))||yes(response(s,'placement'))||yes(response(s,'skills:placement'));
 }
+function isOnlyPlacementQuestion(k){return onlyPlacementKeys.some(x=>canon(x)===canon(k));}
 
 const oldEligible=E.branchEligible||B.eligible;
 function eligible(s,q,options){
   if(!oldEligible(s,q,options))return false;
   const k=canon(q.id);
   const only=onlyPlacementAnswer(s);
+
+  // Once placement is confirmed, resolve "only placement?" BEFORE asking about any other department.
+  if(placementConfirmed(s)&&only===undefined&&crossDepartment.has(k))return false;
+
   if(yes(only)){
-    if(incompatibleWithOnlyPlacement.has(k))return false;
-    // Once "only placement" is confirmed, do not waste questions proving placement again.
+    if(crossDepartment.has(k))return false;
     if(['primary:placement','skills:placement','placement'].includes(k))return false;
   }
-  // If user already explicitly denied only-placement, don't ask its aliases again.
-  if(no(only)&&onlyPlacementKeys.some(x=>canon(x)===k))return false;
+  if(no(only)&&isOnlyPlacementQuestion(k))return false;
   return true;
 }
 E.branchEligible=eligible;
@@ -60,6 +63,16 @@ const oldPick=E.pickQuestion;
 E.pickQuestion=function(s){
   if(s.questionCount>=30)return null;
   const list=E.ranked(s);if(!list.length)return null;
+
+  // Hard gate: after "main department = placement", immediately clarify whether it is placement-only.
+  if(placementConfirmed(s)&&onlyPlacementAnswer(s)===undefined){
+    const q=E.questionById('work:only_placement');
+    if(q&&eligible(s,q)){
+      s.pendingReview=null;
+      return q;
+    }
+  }
+
   const review=E.pickReview?.(s);
   if(review){const q=E.questionById(review.key);if(q&&eligible(s,q,{review:true})){s.pendingReview=review.key;return{...q,text:'Уточню предыдущий ответ. '+q.text};}}
   s.pendingReview=null;
@@ -71,25 +84,23 @@ E.pickQuestion=function(s){
     if(!eligible(s,q,{allowModel:narrow}))continue;
     let u=E.questionUtility(s,q,list);
     const k=canon(q.id);
-    // Prefer personal discriminators once a strict work branch is known.
     if(yes(onlyPlacementAnswer(s))){
-      if(k.startsWith('work:')||k.startsWith('primary:')||k.startsWith('skills:'))u*=.08;
-      else u*=1.18;
+      if(k.startsWith('work:')||k.startsWith('primary:')||k.startsWith('skills:'))u*=.05;
+      else u*=1.22;
     }
     if(u>bestU+1e-9){best=q;bestU=u;}
   }
   return bestU>=.003?best:null;
 };
 
-// A strict work answer is high-value evidence; permit an earlier guess when it clearly isolates a person.
 const oldShouldGuess=E.shouldGuess;
 E.shouldGuess=function(s){
   const list=E.ranked(s);if(!list.length)return false;
   if(list.length===1)return true;
   const top=list[0],second=list[1];
-  if(yes(onlyPlacementAnswer(s))&&placementConfirmed(s)&&s.questionCount>=4&&top.prob>=.84&&(top.score-(second?.score??-100))>=1.7)return true;
+  if(yes(onlyPlacementAnswer(s))&&placementConfirmed(s)&&s.questionCount>=4&&top.prob>=.80&&(top.score-(second?.score??-100))>=1.45)return true;
   return oldShouldGuess(s);
 };
 
-root.WorkLogicV9={eligible,onlyPlacementAnswer};
+root.WorkLogicV10={eligible,onlyPlacementAnswer,placementConfirmed};
 })(typeof window!=='undefined'?window:globalThis);
