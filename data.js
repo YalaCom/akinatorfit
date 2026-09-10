@@ -26,7 +26,7 @@ window.GAME_DATA={people:[
 {id:26,name:'Сайибова Шабнам',f:{assembly:true,dark_hair:true,married:true,has_kids:true,spouse_here:true,sayibov_couple:true}},
 {id:27,name:'Седов Александр',f:{assembly:true,short:true,blonde:true,married:true,recently_married:true,rap:true}},
 {id:28,name:'Семерикова Алёна',f:{assembly:true,ozon:true,short:true,dark_hair:true,short_cut:true,has_kids:false}},
-{id:29,name:'Серов Руслан',f:{placement:true,returned:true,red_hair:true,has_kids:false,has_car:true,mitsubishi:true}},
+{id:29,name:'Серов Руслан',f:{placement:true,returned:true,red_hair:true,has_kids:true,has_son:true,has_daughter:true,son_and_daughter:true,two_kids:true,has_car:true,mitsubishi:true}},
 {id:30,name:'Смирнов Андрей',f:{assembly:true,leroy:true,above_avg:true,athletic:true,short_cut:true,married:true,has_kids:true,has_son:true,has_car:true,skoda:true}},
 {id:31,name:'Степин Виктор',f:{defect:true,full:true,gray_hair:true,older:true,married:true,has_kids:true,has_son:true}},
 {id:32,name:'Тищенко Стас',f:{management:true,deputy:true,avg_height:true,bald:true,married:true,has_kids:true,has_son:true,spouse_here:true,both_mgmt_couple:true,tishchenko_couple:true}},
