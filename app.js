@@ -9,7 +9,7 @@ try{tg?.ready();tg?.expand();tg?.setHeaderColor('#0b1020');tg?.setBackgroundColo
 function show(name){for(const s of screens)$('screen-'+s).classList.toggle('hidden',s!==name);document.body.dataset.screen=name;window.scrollTo(0,0);}
 function genie(state){$('play-genie').src=image[state];$('play-genie').className=state==='thinking'?'thinking':'';}
 function save(){try{sessionStorage.setItem('fit-akinator-session',JSON.stringify(session));}catch(_){}}
-function start(){session=E.createSession();pendingGuess=null;currentQuestion=null;recoveryQueue=[];save();next();}
+async function start(){session=E.createSession();pendingGuess=null;currentQuestion=null;recoveryQueue=[];save();try{await window.AkinatorLearning?.loadModel();}catch(_){}next();}
 function guess(person){pendingGuess=person;currentQuestion=null;$('confirm-name').textContent=person.name;$('confirm-genie').src=image.solved;show('confirm');}
 function recovery(){
  const list=E.clarification(session)||[];
@@ -32,7 +32,18 @@ function next(){
 function answer(a){if(!session||!currentQuestion)return;E.applyAnswer(session,currentQuestion.id,a);currentQuestion=null;save();next();}
 function undo(){if(!session)return;if(E.undo(session)){pendingGuess=null;recoveryQueue=[];save();next();}else show('start');}
 function reject(){if(!pendingGuess)return;E.rejectGuess(session,pendingGuess.id);pendingGuess=null;save();next();}
-function finalize(){if(!pendingGuess)return;$('final-name').textContent=pendingGuess.name;show('final');try{sessionStorage.removeItem('fit-akinator-session');}catch(_){};}
+async function finalize(){
+ if(!pendingGuess)return;
+ const person=pendingGuess;
+ $('final-name').textContent=person.name;
+ const status=$('learn-status');if(status)status.textContent='Запоминаю эту игру…';
+ show('final');
+ try{sessionStorage.removeItem('fit-akinator-session');}catch(_){}
+ try{
+   const ok=await window.AkinatorLearning?.submitConfirmed(person,session);
+   if(status)status.textContent=ok?'Игра сохранена — я стал немного умнее.':'Ответ показан. Обучение сохранится, когда база будет доступна.';
+ }catch(_){if(status)status.textContent='Ответ показан.';}
+}
 function recoverNext(){
  if(!session)return;
  if(!recoveryQueue.length)recoveryQueue=(E.clarification(session)||[]).map(x=>x.id);
@@ -44,7 +55,7 @@ $('btn-start').onclick=start;$('btn-restart-small').onclick=start;$('btn-undo').
 document.querySelectorAll('[data-answer]').forEach(b=>b.onclick=()=>answer(b.dataset.answer));
 $('btn-yes-guess').onclick=finalize;$('btn-no-guess').onclick=reject;
 $('btn-recovery-next').onclick=recoverNext;$('btn-recovery-back').onclick=undo;$('btn-recovery-reset').onclick=start;
-$('final-name').onclick=start;
-try{tg?.BackButton?.onClick(()=>{if(document.body.dataset.screen==='start')tg.close();else undo();});}catch(_){}
+$('btn-again').onclick=start;
+try{tg?.BackButton?.onClick(()=>{if(document.body.dataset.screen==='start')tg.close();else if(document.body.dataset.screen==='final')show('start');else undo();});}catch(_){}
 show('start');
 })();
