@@ -29,10 +29,45 @@ function normalizeAnswer(v) {
   return ['yes','probably_yes','unknown','probably_no','no'].includes(v) ? v : null;
 }
 
+async function ensureSchema(env) {
+  await env.DB.batch([
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS games (
+      id TEXT PRIMARY KEY,
+      person_id INTEGER NOT NULL,
+      person_name TEXT NOT NULL,
+      guessed_correctly INTEGER NOT NULL DEFAULT 0,
+      answer_count INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS game_answers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      game_id TEXT NOT NULL,
+      trait_id TEXT NOT NULL,
+      answer TEXT NOT NULL
+    )`),
+    env.DB.prepare(`CREATE TABLE IF NOT EXISTS confirmed_answers (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      game_id TEXT NOT NULL,
+      person_id INTEGER NOT NULL,
+      trait_id TEXT NOT NULL,
+      answer TEXT NOT NULL
+    )`),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_games_person ON games(person_id)'),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_game_answers_game ON game_answers(game_id)'),
+    env.DB.prepare('CREATE INDEX IF NOT EXISTS idx_confirmed_person_trait ON confirmed_answers(person_id, trait_id)')
+  ]);
+}
+
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(request) });
+
+    try {
+      await ensureSchema(env);
+    } catch (e) {
+      return json(request, { ok:false, error:'db_init_failed', detail:String(e?.message || e) }, 500);
+    }
 
     if (url.pathname === '/api/health' && request.method === 'GET') {
       const row = await env.DB.prepare('SELECT COUNT(*) AS games FROM games').first();
