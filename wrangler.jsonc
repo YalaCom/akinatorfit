@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "akinator",
+  "main": "worker.js",
+  "compatibility_date": "2026-09-10",
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "akinatorfit-db",
+      "database_id": "75b46b6d-1a9a-4154-a08b-044410094241",
+      "migrations_dir": "migrations"
+    }
+  ]
+}
